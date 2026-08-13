@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BIG-BUS Travel — Подорожуйте з комфортом</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #0d0f12;
+            --bg-card: #16191e;
+            --bg-light: #20242c;
+            --accent-red: #e50914;
+            --accent-red-hover: #b80710;
+            --text-white: #ffffff;
+            --text-gray: #9ba1a6;
+            --status-free: #2e7d32;
+            --status-selected: #fbc02d;
+            --status-booked: #d32f2f;
+            --radius-main: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-white); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        a { color: inherit; text-decoration: none; }
+
+        header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(13, 15, 18, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); z-index: 1000; padding: 15px 0;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .nav-wrapper { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; letter-spacing: 1px; }
+        .logo i, .logo span { color: var(--accent-red); }
+        .nav-menu { display: flex; gap: 25px; list-style: none; }
+        .nav-link { font-size: 14px; font-weight: 600; color: var(--text-gray); transition: var(--transition); }
+        .nav-link:hover, .nav-link.active { color: var(--text-white); }
+
+        .btn {
+            background-color: var(--accent-red); color: var(--text-white);
+            padding: 12px 24px; border-radius: var(--radius-main); font-weight: 700;
+            border: none; cursor: pointer; transition: var(--transition);
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px;
+        }
+        .btn:hover { background-color: var(--accent-red-hover); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
+        .btn-outline { background: transparent; border: 2px solid var(--accent-red); }
+        .btn-outline:hover { background: var(--accent-red); color: white; }
+        .btn-danger { background: #d32f2f; }
+        .btn-danger:hover { background: #9a0007; }
+
+        .hamburger { display: none; cursor: pointer; font-size: 24px; padding: 5px; }
+
+        .hero {
+            position: relative; min-height: 90vh; padding-top: 140px; padding-bottom: 60px;
+            display: flex; align-items: center;
+            background: linear-gradient(180deg, rgba(13, 15, 18, 0.6) 0%, var(--bg-main) 100%), 
+                        url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1920') center/cover no-repeat;
+        }
+
+        .hero-content { max-width: 700px; margin-bottom: 40px; }
+        .hero-title { font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 15px; text-transform: uppercase; }
+        .hero-title span { color: var(--accent-red); display: block; }
+        .hero-subtitle { font-size: 18px; color: var(--text-gray); margin-bottom: 30px; }
+        .hero-btns { display: flex; gap: 15px; flex-wrap: wrap; }
+
+        .search-card {
+            background-color: var(--bg-card); border-radius: var(--radius-main); padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-top: 20px;
+        }
+        .search-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .search-title i { color: var(--accent-red); }
+
+        .search-row {
+            display: grid; grid-template-columns: 1fr 45px 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; align-items: flex-end;
+        }
+        
+        .btn-swap {
+            background: var(--bg-light); border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: var(--accent-red); width: 45px; height: 45px; border-radius: 8px; 
+            cursor: pointer; transition: var(--transition); display: flex; 
+            align-items: center; justify-content: center; font-size: 16px;
+        }
+        .btn-swap:hover { background: var(--accent-red); color: #fff; }
+
+        .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-gray); text-transform: uppercase; }
+        .form-control {
+            background: var(--bg-light); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-white); padding: 12px; border-radius: 8px; outline: none; transition: var(--transition); width: 100%;
+            -webkit-appearance: none;
+        }
+        .form-control:focus { border-color: var(--accent-red); }
+        select.form-control { background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); background-repeat: no-repeat; background-position-x: 96%; background-position-y: center; padding-right: 30px; }
+
+        .checkbox-group { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+        .checkbox-label input { accent-color: var(--accent-red); width: 18px; height: 18px; }
+
+        section { padding: 80px 0; }
+        .section-title { text-align: center; font-size: 32px; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; }
+        .section-subtitle { text-align: center; color: var(--text-gray); margin-bottom: 50px; font-size: 16px; }
+
+        .routes-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .route-card {
+            background-color: var(--bg-card); border-radius: var(--radius-main); padding: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05); transition: var(--transition); flex-wrap: wrap; gap: 20px;
+        }
+        .route-card:hover { border-color: rgba(229, 9, 20, 0.4); transform: translateY(-3px); }
+        .route-info { display: flex; align-items: center; gap: 25px; flex-wrap: wrap; }
+        .route-cities { font-size: 20px; font-weight: 700; }
+        .route-time { color: var(--text-gray); font-size: 14px; }
+        .route-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .badge-green { background: rgba(46, 125, 50, 0.2); color: #81c784; }
+        .badge-orange { background: rgba(245, 124, 0, 0.2); color: #ffb74d; }
+        .badge-red { background: rgba(211, 47, 47, 0.2); color: #e57373; }
+        .badge-blue { background: rgba(33, 150, 243, 0.2); color: #64b5f6; }
+        .route-price { text-align: right; }
+        .price-val { font-size: 24px; font-weight: 800; color: var(--accent-red); }
+
+        /* --- Modals --- */
+        .bus-modal, .admin-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 2000;
+            overflow-y: auto; padding: 40px 10px;
+        }
+        .bus-modal-content, .admin-modal-content {
+            background-color: var(--bg-card); max-width: 950px; margin: 0 auto;
+            border-radius: var(--radius-main); padding: 30px; position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: var(--text-gray); z-index: 10; line-height: 1; }
+
+        .bus-layout-container { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; }
+        .bus-schema {
+            background: var(--bg-main); padding: 30px 20px; border-radius: 20px;
+            border: 2px solid var(--bg-light); flex: 1; min-width: 320px; overflow-x: auto;
+        }
+        .seats-grid { 
+            display: grid; grid-template-columns: 45px 45px 30px 45px 45px; gap: 12px; max-width: max-content; margin: 0 auto; 
+        }
+        .door-space {
+            grid-column: 4 / 6; display: flex; align-items: center; justify-content: center;
+            font-size: 13px; color: var(--text-gray); font-weight: 700; text-transform: uppercase;
+            border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px;
+        }
+        .seat {
+            width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; cursor: pointer; transition: var(--transition); user-select: none; position: relative;
+        }
+        .seat.free { background-color: var(--status-free); color: #fff; }
+        .seat.selected { background-color: var(--status-selected); color: #000; box-shadow: 0 0 10px rgba(251, 192, 45, 0.5); }
+        .seat.booked { background-color: var(--status-booked); color: #fff; cursor: not-allowed; }
+        .admin-seat-hover .seat.booked { cursor: pointer; }
+        .admin-seat-hover .seat:hover { filter: brightness(1.2); }
+
+        .legend { display: flex; gap: 15px; justify-content: center; margin-top: 25px; flex-wrap: wrap; font-size: 12px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-box { width: 15px; height: 15px; border-radius: 4px; }
+
+        .booking-details { flex: 1; min-width: 280px; background: var(--bg-light); padding: 20px; border-radius: var(--radius-main); }
+        .parcel-card { background-color: var(--bg-card); border-radius: var(--radius-main); padding: 40px; max-width: 700px; margin: 0 auto; border: 1px solid rgba(255, 255, 255, 0.05); }
+
+        footer { background-color: #08090b; border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 60px 0 20px 0; color: var(--text-gray); }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-col h4 { color: var(--text-white); margin-bottom: 20px; font-size: 16px; }
+
+        .social-link {
+            display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05);
+            padding: 8px 16px; border-radius: 30px; color: var(--text-white); font-weight: 600;
+            font-size: 13px; transition: var(--transition); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .social-link:hover { transform: translateY(-2px); }
+        .social-link.instagram:hover { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-color: transparent; }
+        .social-link.facebook:hover { background: #1877F2; border-color: transparent; }
+        .social-link.tiktok:hover { background: #000; border-color: var(--accent-red); color: var(--accent-red); }
+
+        .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 13px; }
+
+        .admin-btn-float {
+            position: fixed; bottom: 20px; left: 20px; background: #20242c; color: #fff;
+            padding: 10px 15px; border-radius: 30px; font-size: 12px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); z-index: 100; display: flex; align-items: center; gap: 8px;
+        }
+
+        .admin-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; flex-wrap: wrap; }
+        .admin-tab-btn { background: none; border: none; color: var(--text-gray); padding: 8px 14px; font-weight: 700; cursor: pointer; border-radius: 6px; font-size: 13px; }
+        .admin-tab-btn.active { background: var(--accent-red); color: #fff; }
+        
+        /* Адаптивна таблиця для адмінки */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border-radius: 8px; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; }
+        .admin-table th, .admin-table td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .admin-table th { color: var(--text-gray); text-transform: uppercase; font-size: 11px; white-space: nowrap; }
+
+        .status-select {
+            padding: 6px 10px; border-radius: 6px; border: none; font-size: 12px; font-weight: 700; color: #fff; outline: none; cursor: pointer;
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat; background-position-x: 95%; background-position-y: center; padding-right: 25px; min-width: 130px;
+        }
+        .status-select option { background-color: var(--bg-card); color: #fff; }
+        .status-new { background-color: #f57c00; }        
+        .status-confirmed { background-color: #2e7d32; }  
+        .status-paid { background-color: #1976d2; }       
+        .status-no_answer { background-color: #d32f2f; }  
+        .status-system { background-color: #424242; cursor: default; }
+
+        /* --- ІДЕАЛЬНА АДАПТАЦІЯ ДЛЯ ТЕЛЕФОНІВ (МЕДІА-ЗАПИТИ) --- */
+        @media (max-width: 992px) {
+            .search-row { grid-template-columns: 1fr 45px 1fr 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            header { padding: 10px 0; }
+            .logo { font-size: 18px; }
+            .nav-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--bg-card); flex-direction: column; padding: 20px; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .nav-menu.active { display: flex; }
+            .hamburger { display: block; }
+            
+            .hero { min-height: auto; padding-top: 100px; padding-bottom: 40px; text-align: center; }
+            .hero-title { font-size: 32px; margin-bottom: 10px; }
+            .hero-subtitle { font-size: 15px; margin-bottom: 25px; }
+            .hero-btns { flex-direction: column; gap: 12px; width: 100%; }
+            .hero-btns .btn { width: 100%; }
+            
+            section { padding: 50px 0; }
+            .section-title { font-size: 26px; }
+            .section-subtitle { margin-bottom: 30px; font-size: 14px; }
+            
+            .search-card { padding: 20px 15px; margin-top: -10px; }
+            .search-row { grid-template-columns: 1fr; gap: 12px; align-items: center; }
+            .btn-swap { transform: rotate(90deg); margin: 0 auto; width: 40px; height: 40px; }
+            .checkbox-group { margin-top: 5px; }
+            
+            .route-card { flex-direction: column; align-items: flex-start; padding: 20px; gap: 15px; }
+            .route-info { gap: 10px; flex-direction: column; align-items: flex-start; }
+            .route-cities { font-size: 18px; }
+            .route-price { text-align: left; width: 100%; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; margin-top: 5px; }
+            .route-price .btn { margin-top: 0; }
+            .price-val { font-size: 22px; }
+            
+            .parcel-card { padding: 20px 15px; }
+            
+            .bus-modal, .admin-modal { padding: 15px 10px; }
+            .bus-modal-content, .admin-modal-content { padding: 40px 15px 25px 15px; }
+            .close-modal { top: 10px; right: 15px; background: rgba(255,255,255,0.1); border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+            
+            .bus-schema { min-width: 100%; padding: 20px 10px; }
+            .seats-grid { gap: 8px; grid-template-columns: 40px 40px 25px 40px 40px; }
+            .seat { width: 40px; height: 40px; font-size: 13px; }
+            .door-space { font-size: 11px; }
+            
+            .footer-grid { gap: 30px; text-align: center; }
+            .footer-col { display: flex; flex-direction: column; align-items: center; }
+            .social-link { width: 100%; justify-content: center; }
+        }
+        
+        @media (max-width: 400px) {
+            .seats-grid { gap: 6px; grid-template-columns: 36px 36px 20px 36px 36px; }
+            .seat { width: 36px; height: 36px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-wrapper">
+            <a href="#" class="logo"><i class="fa-solid fa-bus"></i> BIG-BUS <span>Travel</span></a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active">Головна</a></li>
+                <li><a href="#routes" class="nav-link">Рейси</a></li>
+                <li><a href="#parcels" class="nav-link">Передачі</a></li>
+                <li><a href="#contacts" class="nav-link">Контакти</a></li>
+            </ul>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="#search-section" class="btn btn-sm"><i class="fa-solid fa-ticket"></i> Квиток</a>
+                <div class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">ПОДОРОЖУЙТЕ <span>З КОМФОРТОМ</span> BIG-BUS TRAVEL</h1>
+                <p class="hero-subtitle">Коломия — Європа. Ваш надійний та перевірений партнер у щоденних міжнародних подорожах.</p>
+                <div class="hero-btns">
+                    <a href="#search-section" class="btn"><i class="fa-solid fa-magnifying-glass"></i> Знайти рейс</a>
+                    <a href="#parcels" class="btn btn-outline"><i class="fa-solid fa-box"></i> Відправити передачу</a>
+                </div>
+            </div>
+
+            <div class="search-card" id="search-section">
+                <div class="search-title"><i class="fa-solid fa-bus"></i> ЗНАЙДІТЬ СВІЙ РЕЙС</div>
+                <form id="searchForm">
+                    <div class="search-row">
+                        <div class="form-group">
+                            <label>Звідки</label>
+                            <select class="form-control" id="fromCity">
+                                <option value="Коломия">Коломия</option>
+                                <option value="Польща">Польща</option>
+                                <option value="Німеччина">Німеччина</option>
+                                <option value="Люксембург">Люксембург</option>
+                                <option value="Париж">Париж (Франція)</option>
+                                <option value="всі">Усі напрямки</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Кнопка заміни місцями -->
+                        <button type="button" class="btn-swap" onclick="swapCities()" title="Змінити напрямок місцями">
+                            <i class="fa-solid fa-right-left"></i>
+                        </button>
+                        
+                        <div class="form-group">
+                            <label>Куди</label>
+                            <select class="form-control" id="toCity" onchange="syncReturnFromCity()">
+                                <option value="всі">Усі напрямки</option>
+                                <option value="Коломия">Коломия</option>
+                                <option value="Польща">Польща</option>
+                                <option value="Німеччина">Німеччина</option>
+                                <option value="Люксембург">Люксембург</option>
+                                <option value="Париж">Париж (Франція)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Дата виїзду</label>
+                            <input type="date" class="form-control" id="departDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Пасажири</label>
+                            <select class="form-control" id="passengerCount">
+                                <option value="1">1 пасажир</option>
+                                <option value="2">2 пасажири</option>
+                                <option value="3">3 пасажири</option>
+                                <option value="4">4 пасажири</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox-label" style="background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); width: 100%;">
+                            <input type="checkbox" id="returnTripToggle" onchange="toggleReturnTrip()"> 
+                            <span><i class="fa-solid fa-arrows-rotate" style="color:var(--accent-red); margin-right:5px;"></i> Додати зворотну поїздку</span>
+                        </label>
+                    </div>
+
+                    <div class="search-grid" id="return-trip" style="display: none; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px; margin-top: 5px;">
+                        <div class="form-group">
+                            <label>Звідки (Зворотно)</label>
+                            <select class="form-control" id="returnFromCity">
+                                <option value="всі">Усі напрямки</option>
+                                <option value="Коломия">Коломия</option>
+                                <option value="Польща">Польща</option>
+                                <option value="Німеччина">Німеччина</option>
+                                <option value="Люксембург">Люксембург</option>
+                                <option value="Париж">Париж (Франція)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Куди (Зворотно)</label>
+                            <select class="form-control" id="returnToCity">
+                                <option value="Коломия">Коломия</option>
+                                <option value="Польща">Польща</option>
+                                <option value="Німеччина">Німеччина</option>
+                                <option value="Люксембург">Люксембург</option>
+                                <option value="Париж">Париж (Франція)</option>
+                                <option value="всі">Усі напрямки</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Дата зворотного виїзду</label>
+                            <input type="date" class="form-control" id="returnDepartDate">
+                        </div>
+                        <div class="form-group" style="opacity: 0; pointer-events: none; display: none;">
+                            <label>Приховано</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;"><i class="fa-solid fa-magnifying-glass"></i> Знайти рейс</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="routes">
+        <div class="container">
+            <h2 class="section-title">Доступні рейси</h2>
+            <p class="section-subtitle">Оберіть потрібний маршрут та забронюйте зручне місце в автобусі</p>
+            <div class="routes-grid" id="routesList"></div>
+        </div>
+    </section>
+
+    <section id="parcels" style="background-color: var(--bg-card);">
+        <div class="container">
+            <h2 class="section-title">Передача посилок</h2>
+            <p class="section-subtitle">Швидка та надійна доставка багажу й документів за маршрутом Коломия — Європа</p>
+            <div class="parcel-card">
+                <form id="parcelForm" onsubmit="handleParcelSubmit(event)">
+                    <div class="search-grid">
+                        <div class="form-group">
+                            <label>ПІБ Відправника</label>
+                            <input type="text" id="pSender" class="form-control" placeholder="Іван Іванов" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Телефон</label>
+                            <input type="tel" id="pPhone" class="form-control" placeholder="+380..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Місто відправлення</label>
+                            <input type="text" id="pFrom" class="form-control" value="Коломия" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Місто отримання</label>
+                            <input type="text" id="pTo" class="form-control" placeholder="напр. Париж / Варшава" required>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Опис посилки (вага, тип)</label>
+                            <textarea id="pDesc" class="form-control" rows="3" placeholder="Сумка 10кг, документи..." required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 15px;"><i class="fa-solid fa-paper-plane"></i> Замовити доставку</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Модалка пасажирського бронювання -->
+    <div class="bus-modal" id="busModal">
+        <div class="bus-modal-content">
+            <span class="close-modal" onclick="closeBusModal()">&times;</span>
+            <h3 style="font-size: 22px; margin-bottom: 5px; padding-right: 20px;" id="modalRouteTitle">Коломия → Париж</h3>
+            <p style="color: var(--text-gray); font-size: 14px; margin-bottom: 20px;" id="modalRouteSubtitle">Дата: 2026-08-15 | Час: 18:00</p>
+            
+            <div id="bookingFormContainer">
+                <form id="passengerDataForm" onsubmit="confirmBooking(event)">
+                    <div class="bus-layout-container">
+                        
+                        <div class="booking-details" style="margin-top: 0; padding: 15px;">
+                            <h4 style="margin-bottom: 15px;">Дані пасажирів</h4>
+                            <div id="passengerFields" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                            
+                            <div class="form-group" style="margin-top:15px;">
+                                <label>Контактний телефон</label>
+                                <input type="tel" id="contactPhone" class="form-control" placeholder="+380..." required>
+                            </div>
+
+                            <label class="checkbox-label" style="background: rgba(229, 9, 20, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(229, 9, 20, 0.3); margin-top: 25px; display: block;">
+                                <input type="checkbox" id="manualModeToggle" onchange="toggleManualMode()"> 
+                                <span style="font-weight:600; font-size: 13px;">Обрати місця самостійно (+10 євро)</span>
+                                <div style="font-size:11px; color:var(--text-gray); margin-top:6px; margin-left:26px; line-height: 1.4;">Автоматично система безкоштовно призначить найближчі вільні місця (ви побачите їх після підтвердження).</div>
+                            </label>
+
+                            <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                                <p style="font-size: 14px; margin-bottom: 5px;">Обрані місця: <strong id="selectedSeatsText" style="color: var(--accent-red);">Автоматично</strong></p>
+                                <p style="font-size: 14px; margin-bottom: 15px;">До сплати: <strong id="totalPriceText" style="color: #81c784; font-size: 18px;">0 євро</strong></p>
+                            </div>
+
+                            <button type="submit" class="btn" style="width: 100%;">Підтвердити бронювання</button>
+                        </div>
+                        
+                        <div id="schemaContainer" class="bus-schema" style="display: none; margin-top: 0;">
+                            <h4 style="margin-bottom: 15px; text-align: center;">Вибір місця</h4>
+                            <div style="display:flex; justify-content:space-between; padding: 0 10px 15px 10px; margin-bottom:20px; border-bottom:2px solid var(--bg-light);">
+                                <div style="color:var(--text-gray); font-size:11px; font-weight:700;"><i class="fa-solid fa-steering-wheel"></i> ВОДІЙ</div>
+                                <div style="color:var(--text-gray); font-size:11px; font-weight:700;"><i class="fa-solid fa-door-open"></i> ВХІД</div>
+                            </div>
+                            <div class="seats-grid" id="seatsGrid"></div>
+                            <div class="legend">
+                                <div class="legend-item"><div class="legend-box" style="background:var(--status-free)"></div> Вільне</div>
+                                <div class="legend-item"><div class="legend-box" style="background:var(--status-selected)"></div> Обране</div>
+                                <div class="legend-item"><div class="legend-box" style="background:var(--status-booked)"></div> Зайняте</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <div id="successContainer" style="display: none; text-align: center; padding: 20px 0;">
+                <div style="color: #81c784; font-size: 48px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i></div>
+                <h3 style="margin-bottom: 10px;">Успішно заброньовано!</h3>
+                <p style="font-size: 16px; margin-bottom: 20px;">Ваші місця: <strong id="successSeatsText" style="color: var(--accent-red); font-size: 20px;">-</strong></p>
+                <p style="color: var(--text-gray); font-size: 14px; margin-bottom: 20px;">Нижче на схемі показано розташування ваших місць в автобусі.</p>
+                
+                <div class="bus-schema" style="margin: 0 auto;">
+                    <div style="display:flex; justify-content:space-between; padding: 0 10px 15px 10px; margin-bottom:20px; border-bottom:2px solid var(--bg-light);">
+                        <div style="color:var(--text-gray); font-size:11px; font-weight:700;"><i class="fa-solid fa-steering-wheel"></i> ВОДІЙ</div>
+                        <div style="color:var(--text-gray); font-size:11px; font-weight:700;"><i class="fa-solid fa-door-open"></i> ВХІД</div>
+                    </div>
+                    <div class="seats-grid" id="successSeatsGrid"></div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box" style="background:var(--status-selected)"></div> Ваші місця</div>
+                    </div>
+                </div>
+
+                <button class="btn" style="margin-top: 30px; width: 100%;" onclick="closeBusModal()">Зрозуміло, дякую</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Кнопка адмінки -->
+    <div class="admin-btn-float" onclick="openAdminAuth()"><i class="fa-solid fa-lock"></i> Адмін панель</div>
+
+    <!-- Модалка входу -->
+    <div class="bus-modal" id="authModal">
+        <div class="bus-modal-content" style="max-width: 400px;">
+            <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+            <h3 style="margin-bottom: 25px; text-align: center; padding-top: 10px;"><i class="fa-solid fa-shield-halved" style="color: var(--accent-red);"></i> Вхід в Адмінку</h3>
+            <form id="authForm" onsubmit="handleLogin(event)">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Логін (напр. admin1)</label>
+                    <input type="text" id="authLogin" class="form-control" placeholder="Введіть логін..." required>
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label>Пароль</label>
+                    <input type="password" id="authPass" class="form-control" placeholder="Введіть пароль..." required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;"><i class="fa-solid fa-arrow-right-to-bracket"></i> Увійти</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модалка панелі керування -->
+    <div class="admin-modal" id="adminModal">
+        <div class="admin-modal-content" style="max-width: 1100px;">
+            <span class="close-modal" onclick="closeAdminModal()">&times;</span>
+            <h3 style="margin-bottom: 20px; padding-right: 30px; line-height: 1.4;"><i class="fa-solid fa-user-gear"></i> Панель Адміністратора <span id="currentAdminDisplay" style="color: var(--accent-red); font-size: 14px; display: block; margin-top: 5px;"></span></h3>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" onclick="switchAdminTab('tabRoutes')">Рейси</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('tabBusSchema')">Автобус</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('tabBookings')">Бронювання</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('tabParcels')">Посилки</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('tabManualBooking')">+ Бронювання</button>
+            </div>
+
+            <!-- Вкладка Рейси -->
+            <div id="tabRoutes" class="admin-tab-content">
+                <h4 style="margin-bottom: 10px;">Додати новий рейс</h4>
+                <form id="addRouteForm" onsubmit="handleAddRoute(event)" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 25px;">
+                    <input type="text" id="newFrom" placeholder="Звідки" class="form-control" value="Коломия" required>
+                    <input type="text" id="newTo" placeholder="Куди" class="form-control" required>
+                    <input type="date" id="newDate" class="form-control" required>
+                    <input type="time" id="newTime" class="form-control" required>
+                    <input type="number" id="newPrice" placeholder="Ціна (євро)" class="form-control" required>
+                    <button type="submit" class="btn btn-sm" style="grid-column: 1 / -1; padding: 12px;"><i class="fa-solid fa-plus"></i> Створити рейс</button>
+                </form>
+
+                <h4>Існуючі рейси</h4>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Маршрут</th><th>Дата/Час</th><th>Ціна (євро)</th><th>Дії</th></tr>
+                        </thead>
+                        <tbody id="adminRoutesTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Вкладка: Схема автобуса -->
+            <div id="tabBusSchema" class="admin-tab-content" style="display: none;">
+                <h4 style="margin-bottom: 15px;">Керування місцями на рейсі</h4>
+                <div class="form-group" style="max-width: 400px; margin-bottom: 20px;">
+                    <label>Оберіть рейс для перегляду та керування схемою</label>
+                    <select id="adminSchemaRouteSelect" class="form-control" onchange="renderAdminBusSchema()">
+                    </select>
+                </div>
+                
+                <div style="color:var(--text-gray); font-size: 13px; margin-bottom: 15px; line-height: 1.5; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                    <i class="fa-solid fa-circle-info" style="color: var(--accent-red); margin-bottom: 5px;"></i><br>
+                    Клікніть по вільному місцю, щоб закрити його для продажу (Заблокувати).<br>
+                    Клікніть по зайнятому місцю, щоб звільнити його (Скасувати бронь).
+                </div>
+
+                <div class="bus-schema admin-seat-hover" style="max-width: 400px; margin: 0; background: var(--bg-card); border-color: rgba(255,255,255,0.1);">
+                    <div style="display:flex; justify-content:space-between; padding: 0 10px 15px 10px; margin-bottom:20px; border-bottom:2px solid var(--bg-light);">
+                        <div style="color:var(--text-gray); font-size:11px; font-weight:700;"><i class="fa-solid fa-steering-wheel"></i> ВОДІЙ</div>
+                        <div style="color:var(--text-gray); font-size:11px; font-weight:700;"><i class="fa-solid fa-door-open"></i> ВХІД</div>
+                    </div>
+                    
+                    <div class="seats-grid" id="adminSeatsGrid"></div>
+                    
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box" style="background:var(--status-free)"></div> Вільне (клік - закрити)</div>
+                        <div class="legend-item"><div class="legend-box" style="background:var(--status-booked)"></div> Зайняте (клік - звільнити)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка Бронювання -->
+            <div id="tabBookings" class="admin-tab-content" style="display: none;">
+                <h4>Заброньовані місця та Пасажири</h4>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Рейс</th><th>Місце</th><th>Пасажир</th><th>Телефон</th><th>Ціна</th><th>Статус</th><th>Дії</th></tr>
+                        </thead>
+                        <tbody id="adminBookingsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Вкладка Посилки -->
+            <div id="tabParcels" class="admin-tab-content" style="display: none;">
+                <h4>Заявки на пересилання посилок</h4>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Відправник</th><th>Телефон</th><th>Напрямок</th><th>Опис</th><th>Дії</th></tr>
+                        </thead>
+                        <tbody id="adminParcelsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Вкладка Ручне Бронювання -->
+            <div id="tabManualBooking" class="admin-tab-content" style="display: none;">
+                <h4 style="margin-bottom: 15px;"><i class="fa-solid fa-phone"></i> Бронювання по телефону</h4>
+                <form id="manualBookingForm" onsubmit="handleManualBooking(event)" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                    <div class="form-group">
+                        <label>Оберіть рейс</label>
+                        <select id="manualRouteSelect" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Номер місця</label>
+                        <input type="number" id="manualSeat" min="1" max="41" class="form-control" placeholder="Наприклад: 5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ПІБ Пасажира</label>
+                        <input type="text" id="manualName" class="form-control" placeholder="Ім'я пасажира" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон</label>
+                        <input type="tel" id="manualPhone" class="form-control" placeholder="+380..." required>
+                    </div>
+                    <button type="submit" class="btn" style="grid-column: 1 / -1; margin-top: 10px;"><i class="fa-solid fa-check"></i> Забронювати місце</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer id="contacts">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#" class="logo" style="margin-bottom: 15px; display: inline-flex;"><i class="fa-solid fa-bus"></i> BIG-BUS <span>Travel</span></a>
+                    <p style="font-size: 14px;">Подорожуйте з комфортом. Щоденні пасажирські та вантажні перевезення по всій Європі.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Контакти</h4>
+                    <p style="font-size: 14px; line-height: 2.2;">
+                        <i class="fa-solid fa-user" style="color:var(--accent-red); width: 20px;"></i> Іван Віконський<br>
+                        <i class="fa-solid fa-phone" style="color:var(--accent-red); width: 20px;"></i> +380966419819<br>
+                        <i class="fa-solid fa-location-dot" style="color:var(--accent-red); width: 20px;"></i> Україна, м. Коломия
+                    </p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                        <a href="https://www.instagram.com/vikonskii.bus?igsi=MThzc3I5MzFscWR6cQ==" target="_blank" class="social-link instagram">
+                            <i class="fa-brands fa-instagram"></i> Instagram
+                        </a>
+                        <a href="https://www.facebook.com/share/19THdup54S/?mibextid=wwXIfr" target="_blank" class="social-link facebook">
+                            <i class="fa-brands fa-facebook"></i> Facebook
+                        </a>
+                        <a href="https://www.tiktok.com/@vikonskii_bus?_r=1&_t=ZS-97RkFipaQks" target="_blank" class="social-link tiktok">
+                            <i class="fa-brands fa-tiktok"></i> TikTok
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">&copy; 2026 BIG-BUS Travel. Усі права захищено.</div>
+        </div>
+    </footer>
+
+    <script>
+        const totalBusSeats = 41;
+
+        const seatPositions = {
+            1: [1,1], 2: [1,2], 3: [1,4], 4: [1,5],
+            5: [2,1], 6: [2,2], 7: [2,4], 8: [2,5],
+            9: [3,1], 10: [3,2], 11: [3,4], 12: [3,5],
+            13: [4,1], 14: [4,2], 15: [4,4], 16: [4,5],
+            17: [5,1], 18: [5,2],
+            19: [6,1], 20: [6,2],
+            21: [7,1], 22: [7,2], 23: [7,4], 24: [7,5],
+            25: [8,1], 26: [8,2], 27: [8,4], 28: [8,5],
+            29: [9,1], 30: [9,2], 31: [9,4], 32: [9,5],
+            33: [10,1], 34: [10,2], 35: [10,4], 36: [10,5],
+            37: [11,1], 38: [11,2], 39: [11,3], 40: [11,4], 41: [11,5]
+        };
+
+        const initialRoutes = [
+            { id: 1, from: "Коломия", to: "Париж", date: "2026-08-15", time: "18:00", price: 85, bookedSeats: [1, 2, 3, 4] },
+            { id: 2, from: "Коломия", to: "Польща", date: "2026-08-16", time: "09:00", price: 45, bookedSeats: [1, 2, 3, 4] },
+            { id: 3, from: "Париж", to: "Коломия", date: "2026-08-20", time: "10:00", price: 85, bookedSeats: [1, 2, 3, 4] }
+        ];
+        
+        const initialBookings = [];
+        initialRoutes.forEach(r => {
+            [1, 2, 3, 4].forEach(seat => {
+                initialBookings.push({
+                    id: Date.now() + Math.random(),
+                    routeId: r.id,
+                    routeTitle: `${r.from} → ${r.to} (${r.date})`,
+                    seat: seat,
+                    passenger: "Системний резерв (Не чіпати)",
+                    phone: "-",
+                    isManual: false,
+                    status: "system"
+                });
+            });
+        });
+
+        let routesData = JSON.parse(localStorage.getItem('bigbus_routes')) || initialRoutes;
+        let bookingsData = JSON.parse(localStorage.getItem('bigbus_bookings')) || initialBookings;
+        let parcelsData = JSON.parse(localStorage.getItem('bigbus_parcels')) || [];
+        
+        bookingsData.forEach(b => {
+            if (!b.status) {
+                if (b.passenger.includes("Системний резерв") || b.passenger.includes("Закрито")) {
+                    b.status = "system";
+                } else {
+                    b.status = "new";
+                }
+            }
+        });
+
+        let currentAdminName = "";
+        let activeRoute = null;
+        let selectedSeats = [];
+        let isManualMode = false;
+
+        const adminAccounts = {
+            "admin1": { pass: "1111", name: "Адміністратор 1" },
+            "admin2": { pass: "2222", name: "Адміністратор 2" },
+            "admin3": { pass: "3333", name: "Адміністратор 3" }
+        };
+
+        function saveData() {
+            localStorage.setItem('bigbus_routes', JSON.stringify(routesData));
+            localStorage.setItem('bigbus_bookings', JSON.stringify(bookingsData));
+            localStorage.setItem('bigbus_parcels', JSON.stringify(parcelsData));
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('departDate').value = today;
+            renderRoutes(routesData);
+
+            document.getElementById('hamburger').addEventListener('click', () => {
+                document.getElementById('navMenu').classList.toggle('active');
+            });
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.getElementById('navMenu').classList.remove('active');
+                });
+            });
+        });
+
+        // --- ЛОГІКА ЗАМІНИ МІСЦЯМИ ---
+        function swapCities() {
+            const fromSelect = document.getElementById('fromCity');
+            const toSelect = document.getElementById('toCity');
+            
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+            
+            syncReturnFromCity();
+        }
+        
+        function toggleReturnTrip() {
+            const returnSection = document.getElementById('return-trip');
+            const isChecked = document.getElementById('returnTripToggle').checked;
+            returnSection.style.display = isChecked ? 'grid' : 'none';
+            if(isChecked) syncReturnFromCity();
+        }
+        
+        function syncReturnFromCity() {
+            const outTo = document.getElementById('toCity').value;
+            if(outTo !== "всі" && document.getElementById('returnTripToggle').checked) {
+                document.getElementById('returnFromCity').value = outTo;
+            }
+        }
+
+        function getSeatStatus(route) {
+            const bookedCount = route.bookedSeats.length;
+            const freeCount = totalBusSeats - bookedCount;
+            const percentageBooked = (bookedCount / totalBusSeats) * 100;
+
+            if (freeCount === 0) return { text: "РОЗПРОДАНО", badgeClass: "badge-red", freeCount };
+            if (freeCount <= 3) return { text: `ЗАЛИШИЛОСЯ ${freeCount} МІСЦЯ`, badgeClass: "badge-red", freeCount };
+            if (percentageBooked >= 40) return { text: "МАЙЖЕ ВСІ КВИТКИ", badgeClass: "badge-orange", freeCount };
+            return { text: `ВІЛЬНО ${freeCount} МІСЦЬ`, badgeClass: "badge-green", freeCount };
+        }
+
+        function renderRoutes(routes) {
+            const listContainer = document.getElementById('routesList');
+            listContainer.innerHTML = "";
+
+            if (routes.length === 0) {
+                listContainer.innerHTML = "<p style='text-align:center; padding: 20px 0;'>За вашим запитом рейсів не знайдено.</p>";
+                return;
+            }
+
+            routes.forEach(route => {
+                const status = getSeatStatus(route);
+                const isSoldOut = status.freeCount === 0;
+                const returnBadge = route.isReturnSegment ? '<span class="route-badge badge-blue" style="margin-left: 10px;">Зворотний</span>' : '';
+
+                const cardHtml = `
+                    <div class="route-card">
+                        <div class="route-info">
+                            <div>
+                                <div class="route-cities">${route.from} → ${route.to} ${returnBadge}</div>
+                                <div class="route-time"><i class="fa-regular fa-clock"></i> ${route.date} | ${route.time}</div>
+                            </div>
+                            <span class="route-badge ${status.badgeClass}">${status.text}</span>
+                        </div>
+                        <div class="route-price">
+                            <div class="price-val">${route.price} євро</div>
+                            <button class="btn" style="margin-top:10px;" ${isSoldOut ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''} onclick="openSeatPicker(${route.id})">
+                                ${isSoldOut ? 'Немає місць' : 'Бронювати'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        document.getElementById('searchForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fromOut = document.getElementById('fromCity').value;
+            const toOut = document.getElementById('toCity').value;
+            const dateOut = document.getElementById('departDate').value;
+            
+            let filtered = routesData.filter(r => 
+                (toOut === "всі" || r.to.toLowerCase() === toOut.toLowerCase()) && 
+                (fromOut === "всі" || r.from.toLowerCase() === fromOut.toLowerCase()) &&
+                (!dateOut || r.date >= dateOut)
+            );
+            
+            filtered.forEach(r => r.isReturnSegment = false);
+
+            if (document.getElementById('returnTripToggle').checked) {
+                const fromRet = document.getElementById('returnFromCity').value;
+                const toRet = document.getElementById('returnToCity').value;
+                const dateRet = document.getElementById('returnDepartDate').value;
+                
+                let returnFiltered = routesData.filter(r => 
+                    (fromRet === "всі" || r.from.toLowerCase() === fromRet.toLowerCase()) && 
+                    (toRet === "всі" || r.to.toLowerCase() === toRet.toLowerCase()) &&
+                    (!dateRet || r.date >= dateRet)
+                );
+                
+                returnFiltered.forEach(r => r.isReturnSegment = true);
+                filtered = [...filtered, ...returnFiltered];
+            }
+            renderRoutes(filtered);
+            document.getElementById('routes').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        function getNextAvailableSeats(count) {
+            let seats = [];
+            for(let i = 1; i <= totalBusSeats; i++) {
+                if(!activeRoute.bookedSeats.includes(i)) {
+                    seats.push(i);
+                    if(seats.length === count) break;
+                }
+            }
+            return seats;
+        }
+
+        function openSeatPicker(routeId) {
+            activeRoute = routesData.find(r => r.id === routeId);
+            document.getElementById('modalRouteTitle').innerText = `${activeRoute.from} → ${activeRoute.to}`;
+            document.getElementById('modalRouteSubtitle').innerText = `Дата: ${activeRoute.date} | Час: ${activeRoute.time} | Ціна за квиток: ${activeRoute.price} євро`;
+            
+            document.getElementById('bookingFormContainer').style.display = 'block';
+            document.getElementById('successContainer').style.display = 'none';
+            document.getElementById('schemaContainer').style.display = 'none';
+            
+            isManualMode = false;
+            document.getElementById('manualModeToggle').checked = false;
+            
+            selectedSeats = [];
+            
+            document.getElementById('passengerFields').innerHTML = '';
+            updateBookingSummary();
+            
+            document.getElementById('busModal').style.display = 'block';
+        }
+
+        function closeBusModal() { document.getElementById('busModal').style.display = 'none'; }
+
+        function drawGrid(gridElement, mode, routeId = null) {
+            gridElement.innerHTML = '';
+
+            const door1 = document.createElement('div');
+            door1.style.gridRow = '5'; door1.style.gridColumn = '4 / 6';
+            door1.innerHTML = '<i class="fa-solid fa-door-open"></i> Вхід';
+            door1.className = 'door-space';
+            gridElement.appendChild(door1);
+            
+            const door2 = document.createElement('div');
+            door2.style.gridRow = '6'; door2.style.gridColumn = '4 / 6';
+            door2.innerHTML = '<i class="fa-solid fa-door-open"></i> Вхід';
+            door2.className = 'door-space';
+            gridElement.appendChild(door2);
+
+            let routeObj = routeId ? routesData.find(r => r.id === routeId) : activeRoute;
+            if(!routeObj) return;
+
+            for (let i = 1; i <= totalBusSeats; i++) {
+                const isBooked = routeObj.bookedSeats.includes(i);
+                
+                let seatClass = 'free';
+                if (selectedSeats.includes(i) && (mode === 'select' || mode === 'readonly')) {
+                    seatClass = 'selected';
+                } else if (isBooked) {
+                    seatClass = 'booked';
+                }
+
+                const seatElem = document.createElement('div');
+                seatElem.className = `seat ${seatClass}`;
+                seatElem.innerText = i;
+                
+                const pos = seatPositions[i];
+                if(pos) {
+                    seatElem.style.gridRow = pos[0];
+                    seatElem.style.gridColumn = pos[1];
+                }
+
+                if (mode === 'admin') {
+                    seatElem.onclick = () => toggleAdminSeat(routeId, i);
+                    if (isBooked) {
+                        const b = bookingsData.find(x => x.routeId === routeId && x.seat === i);
+                        if (b) seatElem.title = `Пасажир: ${b.passenger} | Тел: ${b.phone}`;
+                    } else {
+                        seatElem.title = "Вільне. Натисніть, щоб закрити місце.";
+                    }
+                } else if (mode === 'select') {
+                    if (!isBooked) {
+                        seatElem.onclick = () => handleManualSeatClick(i);
+                    }
+                } 
+                
+                gridElement.appendChild(seatElem);
+            }
+        }
+
+        function handleManualSeatClick(seatNum) {
+            if(!isManualMode) return;
+            
+            const paxCount = parseInt(document.getElementById('passengerCount').value);
+            if (selectedSeats.includes(seatNum)) {
+                selectedSeats = selectedSeats.filter(s => s !== seatNum);
+            } else {
+                if (selectedSeats.length >= paxCount) {
+                    alert(`Ви обрали кількість пасажирів: ${paxCount}.`);
+                    return;
+                }
+                selectedSeats.push(seatNum);
+            }
+            drawGrid(document.getElementById('seatsGrid'), 'select');
+            updateBookingSummary();
+        }
+
+        function toggleManualMode() {
+            isManualMode = document.getElementById('manualModeToggle').checked;
+            document.getElementById('schemaContainer').style.display = isManualMode ? 'block' : 'none';
+            
+            selectedSeats = []; 
+            if(isManualMode) {
+                drawGrid(document.getElementById('seatsGrid'), 'select');
+            }
+            updateBookingSummary();
+        }
+
+        function updateBookingSummary() {
+            const paxCount = parseInt(document.getElementById('passengerCount').value);
+            
+            let extraFee = isManualMode ? 10 * paxCount : 0;
+            let baseTotal = paxCount * activeRoute.price;
+            let grandTotal = baseTotal + extraFee;
+            
+            if (isManualMode) {
+                document.getElementById('selectedSeatsText').innerText = selectedSeats.length > 0 ? selectedSeats.join(', ') : 'Оберіть на схемі';
+            } else {
+                document.getElementById('selectedSeatsText').innerText = 'Автоматично';
+            }
+            
+            let feeText = isManualMode ? `<br><span style="font-size:12px; color:var(--text-gray);">Включно зі збором за вибір місця: +${extraFee} євро</span>` : '';
+            document.getElementById('totalPriceText').innerHTML = `${grandTotal} євро ${feeText}`;
+
+            const formContainer = document.getElementById('passengerFields');
+            const currentInputs = formContainer.querySelectorAll('.pass-name');
+            
+            if (currentInputs.length !== paxCount) {
+                formContainer.innerHTML = '';
+                for (let i = 0; i < paxCount; i++) {
+                    formContainer.insertAdjacentHTML('beforeend', `
+                        <div style="border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px;">
+                            <label style="font-size: 11px; color: var(--text-gray);" class="p-label">Пасажир ${i + 1}</label>
+                            <input type="text" class="form-control pass-name" placeholder="Ім'я та Прізвище" required style="margin-top:4px;">
+                        </div>
+                    `);
+                }
+            }
+            
+            const labels = formContainer.querySelectorAll('.p-label');
+            labels.forEach((label, i) => {
+                let seatStr = isManualMode && selectedSeats[i] ? `(Місце №${selectedSeats[i]})` : '';
+                label.innerText = `Пасажир ${i + 1} ${seatStr}`;
+            });
+        }
+
+        function confirmBooking(e) {
+            e.preventDefault();
+            const paxCount = parseInt(document.getElementById('passengerCount').value);
+            
+            if (isManualMode && selectedSeats.length < paxCount) {
+                return alert(`Будь ласка, оберіть ще ${paxCount - selectedSeats.length} місць на схемі!`);
+            }
+            
+            if (!isManualMode) {
+                selectedSeats = getNextAvailableSeats(paxCount);
+                if (selectedSeats.length < paxCount) {
+                    return alert("На жаль, не вистачає вільних місць. Зв'яжіться з менеджером.");
+                }
+            }
+
+            const phone = document.getElementById('contactPhone').value;
+            const nameInputs = document.querySelectorAll('.pass-name');
+
+            nameInputs.forEach((input, index) => {
+                const seat = selectedSeats[index];
+                activeRoute.bookedSeats.push(seat);
+                bookingsData.push({
+                    id: Date.now() + Math.random(),
+                    routeId: activeRoute.id,
+                    routeTitle: `${activeRoute.from} → ${activeRoute.to} (${activeRoute.date})`,
+                    seat: seat,
+                    passenger: input.value,
+                    phone: phone,
+                    isManual: isManualMode,
+                    status: 'new'
+                });
+            });
+
+            saveData();
+            
+            document.getElementById('bookingFormContainer').style.display = 'none';
+            document.getElementById('successContainer').style.display = 'block';
+            document.getElementById('successSeatsText').innerText = selectedSeats.join(', ');
+            
+            drawGrid(document.getElementById('successSeatsGrid'), 'readonly');
+            
+            document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+        }
+
+        function handleParcelSubmit(e) {
+            e.preventDefault();
+            const parcel = {
+                id: Date.now(),
+                sender: document.getElementById('pSender').value,
+                phone: document.getElementById('pPhone').value,
+                from: document.getElementById('pFrom').value,
+                to: document.getElementById('pTo').value,
+                desc: document.getElementById('pDesc').value
+            };
+            parcelsData.push(parcel);
+            saveData();
+            alert("Заявку на передачу збережено! Менеджер зв'яжеться з вами.");
+            e.target.reset();
+        }
+
+        // --- ADMIN ЛОГІКА ---
+        function openAdminAuth() { document.getElementById('authModal').style.display = 'block'; }
+        function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const login = document.getElementById('authLogin').value.trim();
+            const pass = document.getElementById('authPass').value.trim();
+
+            if (adminAccounts[login] && adminAccounts[login].pass === pass) {
+                currentAdminName = adminAccounts[login].name;
+                document.getElementById('currentAdminDisplay').innerText = `(${currentAdminName})`;
+                closeAuthModal();
+                document.getElementById('authForm').reset();
+                renderAdminTables();
+                document.getElementById('adminModal').style.display = 'block';
+            } else {
+                alert("Невірний логін або пароль!");
+            }
+        }
+
+        function closeAdminModal() { 
+            document.getElementById('adminModal').style.display = 'none'; 
+            currentAdminName = ""; 
+        }
+
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        function renderAdminBusSchema() {
+            const select = document.getElementById('adminSchemaRouteSelect');
+            const grid = document.getElementById('adminSeatsGrid');
+            if (!grid || !select) return;
+
+            if (!select.value) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:var(--text-gray); font-size:14px; padding: 20px 0;">Оберіть рейс для відображення схеми</p>';
+                return;
+            }
+
+            drawGrid(grid, 'admin', parseInt(select.value));
+        }
+
+        function toggleAdminSeat(routeId, seatNum) {
+            const route = routesData.find(r => r.id === routeId);
+            if (!route) return;
+
+            if (route.bookedSeats.includes(seatNum)) {
+                if(confirm(`Звільнити місце №${seatNum}? Пасажира буде видалено.`)) {
+                    route.bookedSeats = route.bookedSeats.filter(s => s !== seatNum);
+                    bookingsData = bookingsData.filter(b => !(b.routeId === routeId && b.seat === seatNum));
+                    
+                    saveData();
+                    renderAdminBusSchema();
+                    renderAdminTables();
+                    document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+                }
+            } else {
+                if(confirm(`Закрити (заблокувати) місце №${seatNum}?`)) {
+                    route.bookedSeats.push(seatNum);
+                    bookingsData.push({
+                        id: Date.now() + Math.random(),
+                        routeId: route.id,
+                        routeTitle: `${route.from} → ${route.to} (${route.date})`,
+                        seat: seatNum,
+                        passenger: `Закрито (${currentAdminName})`,
+                        phone: "-",
+                        isManual: false,
+                        status: 'system'
+                    });
+                    
+                    saveData();
+                    renderAdminBusSchema();
+                    renderAdminTables();
+                    document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+                }
+            }
+        }
+        
+        function changeBookingStatus(id, selectElem) {
+            const b = bookingsData.find(x => x.id === id);
+            if(b) {
+                b.status = selectElem.value;
+                saveData();
+                
+                selectElem.className = 'status-select';
+                if(b.status === 'new') selectElem.classList.add('status-new');
+                if(b.status === 'confirmed') selectElem.classList.add('status-confirmed');
+                if(b.status === 'paid') selectElem.classList.add('status-paid');
+                if(b.status === 'no_answer') selectElem.classList.add('status-no_answer');
+            }
+        }
+
+        function renderAdminTables() {
+            const routesTbody = document.getElementById('adminRoutesTable');
+            routesTbody.innerHTML = '';
+            routesData.forEach(r => {
+                routesTbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td>${r.from} → ${r.to}</td>
+                        <td>${r.date} (${r.time})</td>
+                        <td>${r.price} євро</td>
+                        <td><button class="btn btn-sm btn-danger" onclick="deleteRoute(${r.id})"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `);
+            });
+
+            const bookingsTbody = document.getElementById('adminBookingsTable');
+            bookingsTbody.innerHTML = '';
+            const sortedBookings = [...bookingsData].sort((a,b) => a.routeId - b.routeId || a.seat - b.seat);
+            sortedBookings.forEach(b => {
+                const manualBadge = b.isManual ? '<span style="color:var(--status-selected); font-size:10px; display:block;">(+10 євро)</span>' : '';
+                
+                const route = routesData.find(r => r.id === b.routeId);
+                const basePrice = route ? route.price : 0;
+                let priceDisplay = '-';
+                if (b.status !== 'system') {
+                    const totalPrice = basePrice + (b.isManual ? 10 : 0);
+                    priceDisplay = `<span style="color: #81c784; font-weight: 700;">${totalPrice} євро</span>`;
+                }
+
+                let statusHtml = '';
+                if (b.status === 'system') {
+                    statusHtml = `<span class="status-select status-system" style="display:inline-block;">Система</span>`;
+                } else {
+                    const statuses = [
+                        {val: 'new', text: 'Очікує дзвінка', cls: 'status-new'},
+                        {val: 'confirmed', text: 'Підтверджено', cls: 'status-confirmed'},
+                        {val: 'paid', text: 'Оплачено', cls: 'status-paid'},
+                        {val: 'no_answer', text: 'Не бере слухавку', cls: 'status-no_answer'}
+                    ];
+                    
+                    let currentStatusCls = statuses.find(s => s.val === (b.status || 'new'))?.cls || 'status-new';
+                    
+                    statusHtml = `<select class="status-select ${currentStatusCls}" onchange="changeBookingStatus(${b.id}, this)">`;
+                    statuses.forEach(s => {
+                        let sel = (b.status || 'new') === s.val ? 'selected' : '';
+                        statusHtml += `<option value="${s.val}" ${sel}>${s.text}</option>`;
+                    });
+                    statusHtml += `</select>`;
+                }
+
+                bookingsTbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td>${b.routeTitle}</td>
+                        <td><strong>№ ${b.seat}</strong></td>
+                        <td>${b.passenger} ${manualBadge}</td>
+                        <td>${b.phone}</td>
+                        <td>${priceDisplay}</td>
+                        <td>${statusHtml}</td>
+                        <td><button class="btn btn-sm btn-danger" onclick="cancelBooking(${b.id})">Скасувати</button></td>
+                    </tr>
+                `);
+            });
+
+            const parcelsTbody = document.getElementById('adminParcelsTable');
+            parcelsTbody.innerHTML = '';
+            parcelsData.forEach(p => {
+                parcelsTbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td>${p.sender}</td>
+                        <td>${p.phone}</td>
+                        <td>${p.from} → ${p.to}</td>
+                        <td>${p.desc}</td>
+                        <td><button class="btn btn-sm btn-danger" onclick="deleteParcel(${p.id})">Видалити</button></td>
+                    </tr>
+                `);
+            });
+
+            const manualSelect = document.getElementById('manualRouteSelect');
+            const schemaSelect = document.getElementById('adminSchemaRouteSelect');
+            if (manualSelect && schemaSelect) {
+                const currentManualVal = manualSelect.value;
+                const currentSchemaVal = schemaSelect.value;
+                
+                let optionsHtml = '<option value="">-- Оберіть рейс --</option>';
+                routesData.forEach(r => {
+                    optionsHtml += `<option value="${r.id}">${r.from} → ${r.to} (${r.date} | ${r.time})</option>`;
+                });
+                
+                manualSelect.innerHTML = optionsHtml;
+                schemaSelect.innerHTML = optionsHtml;
+                
+                manualSelect.value = currentManualVal;
+                schemaSelect.value = currentSchemaVal;
+            }
+            renderAdminBusSchema();
+        }
+
+        function handleAddRoute(e) {
+            e.preventDefault();
+            const newRoute = {
+                id: Date.now(),
+                from: document.getElementById('newFrom').value,
+                to: document.getElementById('newTo').value,
+                date: document.getElementById('newDate').value,
+                time: document.getElementById('newTime').value,
+                price: parseFloat(document.getElementById('newPrice').value),
+                bookedSeats: [1, 2, 3, 4]
+            };
+            
+            [1, 2, 3, 4].forEach(seat => {
+                bookingsData.push({
+                    id: Date.now() + Math.random(),
+                    routeId: newRoute.id,
+                    routeTitle: `${newRoute.from} → ${newRoute.to} (${newRoute.date})`,
+                    seat: seat,
+                    passenger: "Системний резерв (Не чіпати)",
+                    phone: "-",
+                    isManual: false,
+                    status: 'system'
+                });
+            });
+
+            routesData.push(newRoute);
+            saveData();
+            renderRoutes(routesData);
+            renderAdminTables();
+            e.target.reset();
+        }
+
+        function deleteRoute(id) {
+            if (confirm("Видалити цей рейс?")) {
+                routesData = routesData.filter(r => r.id !== id);
+                bookingsData = bookingsData.filter(b => b.routeId !== id);
+                saveData();
+                renderRoutes(routesData);
+                renderAdminTables();
+            }
+        }
+
+        function cancelBooking(bookingId) {
+            const b = bookingsData.find(x => x.id === bookingId);
+            if (b) {
+                const route = routesData.find(r => r.id === b.routeId);
+                if (route) {
+                    route.bookedSeats = route.bookedSeats.filter(s => s !== b.seat);
+                }
+                bookingsData = bookingsData.filter(x => x.id !== bookingId);
+                saveData();
+                document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+                renderAdminTables();
+            }
+        }
+
+        function deleteParcel(id) {
+            parcelsData = parcelsData.filter(p => p.id !== id);
+            saveData();
+            renderAdminTables();
+        }
+
+        function handleManualBooking(e) {
+            e.preventDefault();
+            
+            const routeId = parseInt(document.getElementById('manualRouteSelect').value);
+            const seat = parseInt(document.getElementById('manualSeat').value);
+            const name = document.getElementById('manualName').value;
+            const phone = document.getElementById('manualPhone').value;
+
+            if (!routeId) return alert("Оберіть рейс!");
+            if (seat < 1 || seat > totalBusSeats) return alert(`Невірне місце! Доступні від 1 до ${totalBusSeats}`);
+
+            const route = routesData.find(r => r.id === routeId);
+            if (!route) return alert("Рейс не знайдено!");
+
+            if (route.bookedSeats.includes(seat)) {
+                return alert("Помилка! Це місце вже заброньовано кимось іншим.");
+            }
+
+            route.bookedSeats.push(seat);
+            
+            bookingsData.push({
+                id: Date.now() + Math.random(),
+                routeId: route.id,
+                routeTitle: `${route.from} → ${route.to} (${route.date})`,
+                seat: seat,
+                passenger: `${name} (Бронь: ${currentAdminName})`, 
+                phone: phone,
+                isManual: false,
+                status: 'confirmed'
+            });
+
+            saveData();
+            alert(`Успіх! Місце №${seat} на рейс до ${route.to} заброньовано.`);
+            
+            document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+            renderAdminTables();      
+            e.target.reset();         
+        }
+    </script>
+</body>
+</html>
